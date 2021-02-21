@@ -1,0 +1,23 @@
+spring:
+  shell:
+    interactive:
+      enabled: false
+    script: false
+  main:
+    lazy-initialization: true
+  liquibase:
+    change-log: classpath:changelog/changelog-master.xml
+    enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+  datasource:
+    url: jdbc:h2:mem:db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password

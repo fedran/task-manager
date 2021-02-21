@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: task-manager
+  liquibase:
+    change-log: classpath:changelog/changelog-master.xml
+    enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:h2:file:/home/zhuch/projects/demos/task-manager/data/demo
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
