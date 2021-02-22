@@ -59,3 +59,48 @@
 1614004809429:all-projects
 1614004848805:find-project Test
 1614004863955:delete-project Test
+1614008444323:exit
+1614012370805:help
+1614012389484:find-all-projects
+1614012412282:find-user
+1614012437621:create-user Fedran
+1614012443299:find-user
+1614012456896:create-project
+1614012461488:create-project Test
+1614012532984:assign-user Fedran Test
+1614012627710:find-project Test
+1614012765547:create-task "Test task"
+1614012788471:find-all-tasks
+1614012843585:find-task "Test task"
+1614012870033:delete-task "Test-task"
+1614015249997:exit
+1614015405256:create-user fedran
+1614015421403:create-project test
+1614015429668:create-task test
+1614015452823:generate-report test fedran
+1614015807705:exit
+1614015840928:generate-report test fedran
+1614015863137:find-user
+1614015879890:find-all-projects
+1614015892710:generate-report test fedran
+1614016420093:exit
+1614016498949:gene
+1614016507676:generate-report test fedran
+1614016522809:find-user fedran
+1614016547608:exit
+1614016589907:generate-report test fedran
+1614016817535:exit
+1614016847043:generate-report test fedran
+1614017249453:exit
+1614017272640:generate-report test fedran
+1614017321206:stacktrace
+1614017398902:exit
+1614017419966:generate-report test fedran
+1614017486148:find-task test
+1614017507819:help
+1614017994578:exit
+1614018027324:add-to-project test test
+1614018089907:generate-report test fedran
+1614018125791:find-task test
+1614018173902:assign-task-on-user test fedran
+1614018180175:generate-report test fedran

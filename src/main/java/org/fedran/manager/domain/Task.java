@@ -21,7 +21,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "estimate_min")
@@ -103,5 +103,23 @@ public class Task {
 
     public enum Status {
         OPEN, CLOSE
+    }
+
+    public String buildShortString() {
+        return "Task - " + name;
+    }
+
+    public String buildFullString() {
+        return "Task{" +
+                "taskId=" + taskId +
+                ", name='" + name + '\'' +
+                ", estimateMin=" + estimateMin +
+                ", spendMin=" + spendMin +
+                ", status=" + status +
+                ", assignee=" + assignee +
+                ", project=" + project +
+                ", parent=" + parent +
+                ", children=" + children +
+                '}';
     }
 }

@@ -9,7 +9,9 @@
             <column autoIncrement="true" name="PROJECT_ID" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -19,7 +21,9 @@
                 <constraints nullable="false" primaryKey="true"/>
             </column>
             <column name="ESTIMATE_MIN" type="INT"/>
-            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="SPEND_MIN" type="INT">
                 <constraints nullable="false"/>
             </column>
@@ -37,7 +41,9 @@
             <column autoIncrement="true" name="USER_ID" type="BIGINT">
                 <constraints nullable="false" primaryKey="true"/>
             </column>
-            <column name="NAME" type="VARCHAR(255)"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -81,22 +87,22 @@
         <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="TASKS"
                                  constraintName="fk_user_id_tasks" deferrable="false"
                                  initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
-                                 referencedColumnNames="USER_ID" referencedTableName="USERS" />
+                                 referencedColumnNames="USER_ID" referencedTableName="USERS"/>
         <addForeignKeyConstraint baseColumnNames="PROJECT_ID" baseTableName="USERS_PROJECTS"
                                  constraintName="fk_project_id_up"
                                  deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
-                                 referencedColumnNames="USER_ID" referencedTableName="USERS" />
+                                 referencedColumnNames="USER_ID" referencedTableName="USERS"/>
         <addForeignKeyConstraint baseColumnNames="PARENT_ID" baseTableName="TASKS"
                                  constraintName="fk_parent_id_tasks" deferrable="false"
                                  initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
-                                 referencedColumnNames="TASK_ID" referencedTableName="TASKS" />
+                                 referencedColumnNames="TASK_ID" referencedTableName="TASKS"/>
         <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="USERS_PROJECTS"
                                  constraintName="fk_user_id_up" deferrable="false"
                                  initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
-                                 referencedColumnNames="PROJECT_ID" referencedTableName="PROJECTS" />
+                                 referencedColumnNames="PROJECT_ID" referencedTableName="PROJECTS"/>
         <addForeignKeyConstraint baseColumnNames="PROJECT_ID" baseTableName="TASKS"
                                  constraintName="fk_project_id_tasks" deferrable="false"
                                  initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
-                                 referencedColumnNames="PROJECT_ID" referencedTableName="PROJECTS" />
+                                 referencedColumnNames="PROJECT_ID" referencedTableName="PROJECTS"/>
     </changeSet>
 </databaseChangeLog>

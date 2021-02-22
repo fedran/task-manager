@@ -41,4 +41,9 @@ public class ProjectCommands {
         service.deleteByName(name);
         return "Project - " + name + " was successfully deleted";
     }
+
+    @ShellMethod("Assign user to the project")
+    public String assignUser(final String userName, final String projectName) {
+        return service.assignUser(userName, projectName);
+    }
 }
