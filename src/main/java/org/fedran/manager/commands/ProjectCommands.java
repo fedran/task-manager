@@ -28,7 +28,7 @@ public class ProjectCommands {
     }
 
     @ShellMethod("Find all projects")
-    public List<String> allProjects() {
+    public List<String> findAllProjects() {
         final var allProjects = service.findALL();
         if (allProjects.isEmpty()) {
             return Collections.singletonList("no existing projects yet");

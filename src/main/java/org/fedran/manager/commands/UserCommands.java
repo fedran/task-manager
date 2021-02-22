@@ -16,8 +16,7 @@ public class UserCommands {
 
     @ShellMethod("Create user")
     public String createUser(final String name) {
-        var user = service.create(name);
-        return "Created user with id - " + user.getUserId() + " name - " + user.getName();
+        return service.create(name).getName() + " created";
     }
 
     @ShellMethod("Create user")
