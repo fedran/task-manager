@@ -71,18 +71,14 @@ public class Project {
     }
 
     private String buildUsersString() {
-        StringBuilder s = new StringBuilder();
-        for (User user : getUsers()) {
-            s.append(s.length() == 0 ? user.getName() : ", " + user.getName());
-        }
-        return s.toString();
+        return getUsers().stream()
+                .map(User::getName)
+                .collect(Collectors.joining(", "));
     }
 
     private String buildTasksString() {
-        StringBuilder s = new StringBuilder();
-        for (Task task : getTasks()) {
-            s.append(s.length() == 0 ? task.getName() : ", " + task.getName());
-        }
-        return s.toString();
+        return getTasks().stream()
+                .map(Task::getName)
+                .collect(Collectors.joining(", "));
     }
 }
