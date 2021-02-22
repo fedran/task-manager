@@ -1,9 +1,9 @@
 package org.fedran.manager.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -111,15 +111,15 @@ public class Task {
 
     public String buildFullString() {
         return "Task{" +
-                "taskId=" + taskId +
-                ", name='" + name + '\'' +
-                ", estimateMin=" + estimateMin +
-                ", spendMin=" + spendMin +
-                ", status=" + status +
-                ", assignee=" + assignee +
-                ", project=" + project +
-                ", parent=" + parent +
-                ", children=" + children +
+                "taskId=" + getTaskId() +
+                ", name='" + getName() + '\'' +
+                ", estimateMin=" + getEstimateMin() +
+                ", spendMin=" + getSpendMin() +
+                ", status=" + getStatus() +
+                ", assignee=" + getAssignee() +
+                ", project=" + getProject() +
+                ", parent=" + getParent() +
+                ", children=" + getParent() +
                 '}';
     }
 }

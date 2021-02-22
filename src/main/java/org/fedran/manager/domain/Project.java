@@ -1,10 +1,11 @@
 package org.fedran.manager.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
