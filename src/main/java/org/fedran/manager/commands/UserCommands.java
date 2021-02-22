@@ -1,9 +1,9 @@
 package org.fedran.manager.commands;
 
-import org.fedran.manager.service.UserService;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.fedran.manager.service.UserService;
 
 @ShellComponent
 public class UserCommands {
@@ -15,13 +15,13 @@ public class UserCommands {
     }
 
     @ShellMethod("Create user")
-    public String createUser(String name) {
+    public String createUser(final String name) {
         var user = service.create(name);
         return "Created user with id - " + user.getUserId() + " name - " + user.getName();
     }
 
     @ShellMethod("Create user")
-    public String findUser(@ShellOption(defaultValue="") String name) {
+    public String findUser(@ShellOption(defaultValue="") final String name) {
         var users = service.findByNameLike(name);
         var sb = new StringBuilder();
         for (int i = 0; i < users.size(); i++) {

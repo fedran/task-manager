@@ -27,3 +27,35 @@
 1613922372647:exit
 1613922751213:create-user uri-on-ice
 1613922911341:exit
+1613999929822:help
+1613999975139:create-project Test project
+1613999999922:create-project 'Test project'
+1614000012853:find-all-projects
+1614000106554:exit
+1614000145988:find-all-projects
+1614000246018:exit
+1614000730432:find-all-projects
+1614000774732:create-project "Test project"
+1614000804960:find-all-projects
+1614001114918:exit
+1614001173560:find-all-projects
+1614001200276:help
+1614001234443:find-project-by-name "Test project"
+1614001498441:exit
+1614001545472:help
+1614001550200:all-projects
+1614001569506:find-project "Tets project"
+1614001580760:find-project "Test project"
+1614001594576:delete-project "Test project"
+1614003155923:help
+1614003169703:find-project "Test project"
+1614003175734:all-projects
+1614003424175:exit
+1614003454537:all-projects
+1614003622659:create-project Test
+1614003633107:all-projects
+1614003753824:find-project Test
+1614004771316:exit
+1614004809429:all-projects
+1614004848805:find-project Test
+1614004863955:delete-project Test

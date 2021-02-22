@@ -30,9 +30,9 @@ public class Project {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-        name = "users_projects",
-        joinColumns = {@JoinColumn(name = "user_id")},
-        inverseJoinColumns = {@JoinColumn(name = "project_id")}
+            name = "users_projects",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "project_id")}
     )
     private Set<User> users = new HashSet<>();
 
@@ -57,5 +57,31 @@ public class Project {
     @Override
     public int hashCode() {
         return projectId != null ? projectId.hashCode() : 0;
+    }
+
+    public String buildShortString() {
+        return "Project " + getName();
+    }
+
+    public String buildFullString() {
+        return "Project " + getName() + System.lineSeparator() +
+                "Users: " + buildUsersString() + System.lineSeparator() +
+                "Tasks: " + buildTasksString();
+    }
+
+    private String buildUsersString() {
+        StringBuilder s = new StringBuilder();
+        for (User user : getUsers()) {
+            s.append(s.length() == 0 ? user.getName() : ", " + user.getName());
+        }
+        return s.toString();
+    }
+
+    private String buildTasksString() {
+        StringBuilder s = new StringBuilder();
+        for (Task task : getTasks()) {
+            s.append(s.length() == 0 ? task.getName() : ", " + task.getName());
+        }
+        return s.toString();
     }
 }
