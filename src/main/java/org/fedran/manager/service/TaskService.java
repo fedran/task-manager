@@ -10,7 +10,6 @@ import org.fedran.manager.domain.Task;
 import java.util.stream.StreamSupport;
 import java.util.stream.Collectors;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.List;
 
 @Service
