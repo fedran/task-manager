@@ -33,9 +33,10 @@ public class TaskService {
         return task;
     }
 
-    public Optional<String> findByName(final String name) {
+    public String findByName(final String name) {
         return taskRepository.findByName(name)
-                .map(Task::buildFullString);
+            .map(Task::buildFullString)
+            .orElse(failedToLoadMessage(name));
     }
 
     public List<String> findAll() {
@@ -56,7 +57,7 @@ public class TaskService {
         }
         return taskRepository.findByName(taskName)
                 .map(task -> {
-                    task.assignUser(optUser.get());
+                    task.setAssignee(optUser.get());
                     taskRepository.save(task);
                     return taskName + " assigned on " + userName;
                 })
@@ -71,7 +72,7 @@ public class TaskService {
         return projectRepository.findByName(projectName)
                 .map(project -> {
                     final var task = optTask.get();
-                    task.addTo(project);
+                    task.setProject(project);
                     taskRepository.save(task);
                     return taskName + " successfully added to " + projectName;
                 })
@@ -104,7 +105,7 @@ public class TaskService {
         return taskRepository.findByName(subTaskName)
                 .map(subTask -> {
                     final var task = optTask.get();
-                    task.addChild(subTask);
+                    task.setParent(subTask);
                     taskRepository.save(task);
                     return subTaskName + " added to " + taskName;
                 })
@@ -112,14 +113,13 @@ public class TaskService {
     }
 
     public String removeParent(final String taskName) {
-        final var optTask = taskRepository.findByName(taskName);
-        if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
-        }
-        final var task = optTask.get();
-        task.removeParent();
-        taskRepository.save(task);
-        return "parent of " + taskName + " removed";
+        return taskRepository.findByName(taskName)
+            .map(task -> {
+                task.removeParent();
+                taskRepository.save(task);
+                return taskName + " was successfully closed";
+            })
+            .orElse(failedToLoadMessage(taskName));
     }
 
     public String closeTask(final String taskName) {

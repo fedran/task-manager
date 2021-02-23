@@ -38,13 +38,11 @@ public class Project {
     private Set<User> users = new HashSet<>();
 
     public void addUser(User user) {
-        users.add(user);
-        user.getProjects().add(this);
+        getUsers().add(user);
     }
 
     public void removeUser(User user) {
-        users.remove(user);
-        user.getProjects().remove(this);
+        getUsers().remove(user);
     }
 
     @Override
