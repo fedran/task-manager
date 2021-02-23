@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import java.util.Optional;
 import java.util.List;
 
+import static org.fedran.manager.service.TaskService.failedToLoadMessage;
+
 @Service
 @Transactional
 public class ProjectService {
@@ -47,15 +49,14 @@ public class ProjectService {
     public String assignUser(final String userName, final String projectName) {
         final var optUser = userRepository.findByName(userName);
         if (optUser.isEmpty()) {
-            return "can not find user with name " + userName;
+            return failedToLoadMessage(userName);
         }
-        final var optProject = projectRepository.findByName(projectName);
-        if (optProject.isEmpty()) {
-            return "can not find project with name " + projectName;
-        }
-        final var project = optProject.get();
-        project.addUser(optUser.get());
-        projectRepository.save(project);
-        return userName + " successfully assigned to " + projectName;
+        return projectRepository.findByName(projectName).
+                map(project -> {
+                    project.addUser(optUser.get());
+                    projectRepository.save(project);
+                    return userName + " successfully assigned to " + projectName;
+                })
+                .orElse(failedToLoadMessage(projectName));
     }
 }

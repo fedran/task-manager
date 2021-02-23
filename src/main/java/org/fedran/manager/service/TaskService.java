@@ -51,42 +51,41 @@ public class TaskService {
     public String assignTaskOnUser(final String taskName, final String userName) {
         final var optUser = userRepository.findByName(userName);
         if (optUser.isEmpty()) {
-            return "can not find user with name " + userName;
+            return failedToLoadMessage(userName);
 
         }
-        final var optTask = taskRepository.findByName(taskName);
-        if (optTask.isEmpty()) {
-            return "can not find task " + taskName;
-        }
-        final var task = optTask.get();
-        task.assignUser(optUser.get());
-        taskRepository.save(task);
-        return taskName + " assigned on " + userName;
+        return taskRepository.findByName(taskName)
+                .map(task -> {
+                    task.assignUser(optUser.get());
+                    taskRepository.save(task);
+                    return taskName + " assigned on " + userName;
+                })
+                .orElse(failedToLoadMessage(taskName));
     }
 
     public String addTaskToProject(final String taskName, final String projectName) {
         final var optTask = taskRepository.findByName(taskName);
         if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
+            return failedToLoadMessage(taskName);
         }
-        final var optProject = projectRepository.findByName(projectName);
-        if (optProject.isEmpty()) {
-            return "failed to load " + projectName;
-        }
-        final var task = optTask.get();
-        task.addTo(optProject.get());
-        taskRepository.save(task);
-        return taskName + " successfully added to " + projectName;
+        return projectRepository.findByName(projectName)
+                .map(project -> {
+                    final var task = optTask.get();
+                    task.addTo(project);
+                    taskRepository.save(task);
+                    return taskName + " successfully added to " + projectName;
+                })
+                .orElse(failedToLoadMessage(projectName));
     }
 
     public List<String> generateReport(final String projectName, final String userName) {
         final var optProject = projectRepository.findByName(projectName);
         if (optProject.isEmpty()) {
-            return Collections.singletonList("failed to load project " + projectName);
+            return Collections.singletonList(failedToLoadMessage(projectName));
         }
         final var optUser = userRepository.findByName(userName);
         if (optUser.isEmpty()) {
-            return Collections.singletonList("failed to load user " + userName);
+            return Collections.singletonList(failedToLoadMessage(userName));
         }
         final var report = taskRepository.findByProjectIdAndAssigneeId(optProject.get().getProjectId(), optUser.get().getUserId());
         if (report.isEmpty()) {
@@ -100,16 +99,16 @@ public class TaskService {
     public String addSubtask(String taskName, String subTaskName) {
         final var optTask = taskRepository.findByName(taskName);
         if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
+            return failedToLoadMessage(taskName);
         }
-        final var subTask = taskRepository.findByName(subTaskName);
-        if (subTask.isEmpty()) {
-            return "failed to load " + subTaskName;
-        }
-        final var task = optTask.get();
-        task.addChild(subTask.get());
-        taskRepository.save(task);
-        return subTaskName + " added to " + taskName;
+        return taskRepository.findByName(subTaskName)
+                .map(subTask -> {
+                    final var task = optTask.get();
+                    task.addChild(subTask);
+                    taskRepository.save(task);
+                    return subTaskName + " added to " + taskName;
+                })
+                .orElse(failedToLoadMessage(subTaskName));
     }
 
     public String removeParent(final String taskName) {
@@ -124,44 +123,42 @@ public class TaskService {
     }
 
     public String closeTask(final String taskName) {
-        final var optTask = taskRepository.findByName(taskName);
-        if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
-        }
-        final var task = optTask.get();
-        task.close();
-        taskRepository.save(task);
-        return taskName + " was successfully closed";
+        return taskRepository.findByName(taskName)
+                .map(task -> {
+                    task.close();
+                    taskRepository.save(task);
+                    return taskName + " was successfully closed";
+                })
+                .orElse(failedToLoadMessage(taskName));
     }
 
     public String estimate(final String taskName, final Integer min) {
-        final var optTask = taskRepository.findByName(taskName);
-        if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
-        }
-        final var task = optTask.get();
-        task.setEstimateMin(min);
-        taskRepository.save(task);
-        return taskName + " successfully estimated";
+        return taskRepository.findByName(taskName)
+                .map(task -> {
+                    task.setEstimateMin(min);
+                    taskRepository.save(task);
+                    return taskName + " successfully estimated";
+                })
+                .orElse(failedToLoadMessage(taskName));
     }
 
     public String spend(final String taskName, final Integer min) {
-//        TODO: remove duplicates
-        final var optTask = taskRepository.findByName(taskName);
-        if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
-        }
-        final var task = optTask.get();
-        task.setSpendMin(min);
-        taskRepository.save(task);
-        return taskName + " spent time successfully set";
+        return taskRepository.findByName(taskName)
+                .map(task -> {
+                    task.setSpendMin(min);
+                    taskRepository.save(task);
+                    return taskName + " spent time successfully set";
+                })
+                .orElse(failedToLoadMessage(taskName));
     }
 
     public String calculateRemainingTimeSum(final String taskName) {
-        final var optTask = taskRepository.findByName(taskName);
-        if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
-        }
-        return "remaining time: " + optTask.get().calculateRemainingTimeSum();
+        return taskRepository.findByName(taskName)
+                .map(task -> "remaining time: " + task.calculateRemainingTimeSum())
+                .orElse(failedToLoadMessage(taskName));
+    }
+
+    public static String failedToLoadMessage(final String name) {
+        return "failed to load " + name;
     }
 }
