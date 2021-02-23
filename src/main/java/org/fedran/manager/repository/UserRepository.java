@@ -7,8 +7,9 @@ import java.util.Optional;
 import java.util.List;
 
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
-
     Optional<User> findByName(String name);
 
     List<User> findByNameLike(String name);
+
+    void deleteByName(String name);
 }

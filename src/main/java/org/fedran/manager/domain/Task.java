@@ -85,7 +85,17 @@ public class Task {
 
     public void close() {
         setStatus(Status.CLOSE);
-        getChildren().forEach(Task::close);
+        for (Task task : getChildren()) {
+            task.close();
+        }
+    }
+
+    public Integer calculateRemainingTimeSum() {
+        var i = getEstimateMin() - getSpendMin();
+        for (Task child : getChildren()) {
+            i = i + (child.calculateRemainingTimeSum());
+        }
+        return i;
     }
 
     @Override

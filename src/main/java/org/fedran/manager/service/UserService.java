@@ -31,4 +31,8 @@ public class UserService {
         }
         return userRepository.findByNameLike("%" + name + "%");
     }
+
+    public void delete(final String name) {
+        userRepository.deleteByName(name);
+    }
 }

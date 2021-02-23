@@ -56,4 +56,43 @@ public class TaskCommands {
     public List<String> generateReport(final String projectName, final String userName) {
         return service.generateReport(projectName, userName);
     }
+
+    @ShellMethod("Add subtask")
+    public String addSubtask(final String taskName, final String subTaskName) {
+        return service.addSubtask(taskName, subTaskName);
+    }
+
+    @ShellMethod("Remove parent")
+    public String removeParent(final String taskName) {
+        return service.removeParent(taskName);
+    }
+
+    @ShellMethod("Close task")
+    public String closeTask(final String taskName) {
+        return service.closeTask(taskName);
+    }
+
+    @ShellMethod("Estimate task")
+    public String estimate(final String taskName, final String min) {
+        final var integer = Integer.parseInt(min);
+        if (integer < 0) {
+            return "estimate can not be negative";
+        }
+        return service.estimate(taskName, integer);
+    }
+
+    @ShellMethod("Set the time spent")
+    public String spend(final String taskName, final String min) {
+        final var integer = Integer.parseInt(min);
+        if (integer < 0) {
+            return "time can not be negative";
+        }
+        return service.spend(taskName, integer);
+    }
+
+    @ShellMethod("Get sum of remaining time include all subtasks")
+    public String calculateRemainingTimeSum(final String taskName) {
+        return service.calculateRemainingTimeSum(taskName);
+    }
+
 }

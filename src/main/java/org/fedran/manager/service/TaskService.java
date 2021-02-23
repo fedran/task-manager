@@ -96,4 +96,72 @@ public class TaskService {
                 .map(Task::buildShortString)
                 .collect(Collectors.toList());
     }
+
+    public String addSubtask(String taskName, String subTaskName) {
+        final var optTask = taskRepository.findByName(taskName);
+        if (optTask.isEmpty()) {
+            return "failed to load " + taskName;
+        }
+        final var subTask = taskRepository.findByName(subTaskName);
+        if (subTask.isEmpty()) {
+            return "failed to load " + subTaskName;
+        }
+        final var task = optTask.get();
+        task.addChild(subTask.get());
+        taskRepository.save(task);
+        return subTaskName + " added to " + taskName;
+    }
+
+    public String removeParent(final String taskName) {
+        final var optTask = taskRepository.findByName(taskName);
+        if (optTask.isEmpty()) {
+            return "failed to load " + taskName;
+        }
+        final var task = optTask.get();
+        task.removeParent();
+        taskRepository.save(task);
+        return "parent of " + taskName + " removed";
+    }
+
+    public String closeTask(final String taskName) {
+        final var optTask = taskRepository.findByName(taskName);
+        if (optTask.isEmpty()) {
+            return "failed to load " + taskName;
+        }
+        final var task = optTask.get();
+        task.close();
+        taskRepository.save(task);
+        return taskName + " was successfully closed";
+    }
+
+    public String estimate(final String taskName, final Integer min) {
+        final var optTask = taskRepository.findByName(taskName);
+        if (optTask.isEmpty()) {
+            return "failed to load " + taskName;
+        }
+        final var task = optTask.get();
+        task.setEstimateMin(min);
+        taskRepository.save(task);
+        return taskName + " successfully estimated";
+    }
+
+    public String spend(final String taskName, final Integer min) {
+//        TODO: remove duplicates
+        final var optTask = taskRepository.findByName(taskName);
+        if (optTask.isEmpty()) {
+            return "failed to load " + taskName;
+        }
+        final var task = optTask.get();
+        task.setSpendMin(min);
+        taskRepository.save(task);
+        return taskName + " spent time successfully set";
+    }
+
+    public String calculateRemainingTimeSum(final String taskName) {
+        final var optTask = taskRepository.findByName(taskName);
+        if (optTask.isEmpty()) {
+            return "failed to load " + taskName;
+        }
+        return "remaining time: " + optTask.get().calculateRemainingTimeSum();
+    }
 }
