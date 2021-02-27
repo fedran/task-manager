@@ -1,11 +1,14 @@
 package org.fedran.manager.commands;
 
+import org.fedran.manager.domain.Task;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.fedran.manager.service.TaskService;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.fedran.manager.service.TaskService.failedToLoadMessage;
 
 @ShellComponent
 public class TaskCommands {
@@ -23,7 +26,9 @@ public class TaskCommands {
 
     @ShellMethod("Find task")
     public String findTask(final String name) {
-        return service.findByName(name);
+        return service.findByName(name)
+                .map(Task::buildFullString)
+                .orElse(failedToLoadMessage(name));
     }
 
     @ShellMethod("Find all tasks")
@@ -52,7 +57,7 @@ public class TaskCommands {
     }
 
     @ShellMethod("Generate the report of all tasks for specified Projects by specified User")
-    public List<String> generateReport(final String projectName, final String userName) {
+    public String generateReport(final String projectName, final String userName) {
         return service.generateReport(projectName, userName);
     }
 

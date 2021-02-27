@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,24 +49,17 @@ public class Task {
     private Task parent;
 
     @OneToMany(mappedBy = "parent")
-    private Set<Task> children;
+    private Set<Task> children = new HashSet<>();
 
     public void removeParent() {
         setParent(null);
     }
 
-    public void close() {
-        setStatus(Status.CLOSE);
-        for (Task task : getChildren()) {
-            task.close();
-        }
-    }
-
     public int calculateRemainingTimeSum() {
         var i = getEstimateMin() - getSpendMin();
-        return i + children.stream()
-            .mapToInt(Task::calculateRemainingTimeSum)
-            .sum();
+        return i = i + children.stream()
+                    .mapToInt(Task::calculateRemainingTimeSum)
+                    .sum();
     }
 
     @Override

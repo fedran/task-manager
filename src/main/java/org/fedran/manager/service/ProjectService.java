@@ -31,9 +31,8 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public Optional<String> findByName(final String name) {
-        return projectRepository.findByName(name)
-                .map(Project::buildFullString);
+    public Optional<Project> findByName(final String name) {
+        return projectRepository.findByName(name);
     }
 
     public List<String> findALL() {

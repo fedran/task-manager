@@ -1,5 +1,6 @@
 package org.fedran.manager.commands;
 
+import org.fedran.manager.domain.Project;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.fedran.manager.service.ProjectService;
@@ -24,6 +25,7 @@ public class ProjectCommands {
     @ShellMethod("Find project by name")
     public String findProject(final String name) {
         return service.findByName(name)
+                .map(Project::buildFullString)
                 .orElse("project with name " + name + " does not exist");
     }
 

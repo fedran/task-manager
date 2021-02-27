@@ -9,7 +9,6 @@ import org.fedran.manager.domain.Task;
 
 import java.util.stream.StreamSupport;
 import java.util.stream.Collectors;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.List;
 
@@ -33,10 +32,8 @@ public class TaskService {
         return task;
     }
 
-    public String findByName(final String name) {
-        return taskRepository.findByName(name)
-            .map(Task::buildFullString)
-            .orElse(failedToLoadMessage(name));
+    public Optional<Task> findByName(final String name) {
+        return taskRepository.findByName(name);
     }
 
     public List<String> findAll() {
@@ -79,22 +76,24 @@ public class TaskService {
                 .orElse(failedToLoadMessage(projectName));
     }
 
-    public List<String> generateReport(final String projectName, final String userName) {
+    public String generateReport(final String projectName, final String userName) {
         final var optProject = projectRepository.findByName(projectName);
         if (optProject.isEmpty()) {
-            return Collections.singletonList(failedToLoadMessage(projectName));
+            return failedToLoadMessage(projectName);
         }
         final var optUser = userRepository.findByName(userName);
         if (optUser.isEmpty()) {
-            return Collections.singletonList(failedToLoadMessage(userName));
+            return failedToLoadMessage(userName);
         }
-        final var report = taskRepository.findByProjectIdAndAssigneeId(optProject.get().getProjectId(), optUser.get().getUserId());
-        if (report.isEmpty()) {
-            return Collections.singletonList("no available reports for " + projectName + " by " + userName);
+        final var taskList = taskRepository.findByProjectIdAndAssigneeId(optProject.get().getProjectId(), optUser.get().getUserId());
+        if (taskList.isEmpty()) {
+            return "no available reports for " + projectName + " by " + userName;
         }
-        return report.stream()
-                .map(Task::buildShortString)
-                .collect(Collectors.toList());
+
+        return "Tasks created for " + projectName + " by " + userName + ":" + System.lineSeparator() +
+                taskList.stream()
+                        .map(Task::getName)
+                        .collect(Collectors.joining(", " + System.lineSeparator()));
     }
 
     public String addSubtask(String taskName, String subTaskName) {
@@ -105,8 +104,8 @@ public class TaskService {
         return taskRepository.findByName(subTaskName)
                 .map(subTask -> {
                     final var task = optTask.get();
-                    task.addChild(subTask);
-                    taskRepository.save(task);
+                    subTask.setParent(task);
+                    taskRepository.save(subTask);
                     return subTaskName + " added to " + taskName;
                 })
                 .orElse(failedToLoadMessage(subTaskName));
@@ -125,8 +124,7 @@ public class TaskService {
     public String closeTask(final String taskName) {
         return taskRepository.findByName(taskName)
                 .map(task -> {
-                    task.close();
-                    taskRepository.save(task);
+                    closeTask(task);
                     return taskName + " was successfully closed";
                 })
                 .orElse(failedToLoadMessage(taskName));
@@ -160,5 +158,16 @@ public class TaskService {
 
     public static String failedToLoadMessage(final String name) {
         return "failed to load " + name;
+    }
+
+    private void closeTask(final Task task) {
+        task.setStatus(Task.Status.CLOSE);
+        taskRepository.save(task);
+        final var children = task.getChildren();
+        if (children != null) {
+            for (Task subtask : children) {
+                closeTask(subtask);
+            }
+        }
     }
 }
