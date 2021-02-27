@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="fedran" id="projects-0221">
+        <createTable tableName="PROJECTS">
+            <column autoIncrement="true" name="PROJECT_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="fedran" id="tasks-0221">
+        <createTable tableName="TASKS">
+            <column autoIncrement="true" name="TASK_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="ESTIMATE_MIN" type="INT"/>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SPEND_MIN" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="STATUS" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="BIGINT"/>
+            <column name="PARENT_ID" type="BIGINT"/>
+            <column name="PROJECT_ID" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="fedran" id="users-0221">
+        <createTable tableName="USERS">
+            <column autoIncrement="true" name="USER_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="fedran" id="users-project-0221">
+        <createTable tableName="USERS_PROJECTS">
+            <column name="USER_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="PROJECT_ID" type="BIGINT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="fedran" id="unique-names-0221">
+        <addUniqueConstraint columnNames="NAME" constraintName="uk_name_projects" tableName="PROJECTS"/>
+        <addUniqueConstraint columnNames="NAME" constraintName="uk_name_users" tableName="USERS"/>
+        <addUniqueConstraint columnNames="NAME" constraintName="uk_name_tasks" tableName="TASKS"/>
+    </changeSet>
+
+
+    <changeSet author="fedran" id="indexes-0221">
+        <createIndex indexName="index_project_id_up" tableName="USERS_PROJECTS">
+            <column name="PROJECT_ID"/>
+        </createIndex>
+        <createIndex indexName="index_user_id_up" tableName="USERS_PROJECTS">
+            <column name="USER_ID"/>
+        </createIndex>
+        <createIndex indexName="index_user_id_tasks" tableName="TASKS">
+            <column name="USER_ID"/>
+        </createIndex>
+        <createIndex indexName="index_parent_id_tasks" tableName="TASKS">
+            <column name="PARENT_ID"/>
+        </createIndex>
+        <createIndex indexName="index_project_id_tasks" tableName="TASKS">
+            <column name="PROJECT_ID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="fedran" id="foreign-keys-0221">
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="TASKS"
+                                 constraintName="fk_user_id_tasks" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="USER_ID" referencedTableName="USERS"/>
+        <addForeignKeyConstraint baseColumnNames="PROJECT_ID" baseTableName="USERS_PROJECTS"
+                                 constraintName="fk_project_id_up"
+                                 deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="USER_ID" referencedTableName="USERS"/>
+        <addForeignKeyConstraint baseColumnNames="PARENT_ID" baseTableName="TASKS"
+                                 constraintName="fk_parent_id_tasks" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="TASK_ID" referencedTableName="TASKS"/>
+        <addForeignKeyConstraint baseColumnNames="USER_ID" baseTableName="USERS_PROJECTS"
+                                 constraintName="fk_user_id_up" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="PROJECT_ID" referencedTableName="PROJECTS"/>
+        <addForeignKeyConstraint baseColumnNames="PROJECT_ID" baseTableName="TASKS"
+                                 constraintName="fk_project_id_tasks" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="PROJECT_ID" referencedTableName="PROJECTS"/>
+    </changeSet>
+</databaseChangeLog>
