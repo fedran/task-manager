@@ -1,8 +1,8 @@
 package org.fedran.manager.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -22,7 +22,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "users")
@@ -44,4 +44,3 @@ public class User {
         return userId != null ? userId.hashCode() : 0;
     }
 }
-

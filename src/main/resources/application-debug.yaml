@@ -13,7 +13,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:h2:file:/home/zhuch/projects/demos/task-manager/data/demo
+    url: jdbc:h2:file:/Users/theodore/desktop/task-manager/data/task-manager
     driver-class-name: org.h2.Driver
     username: sa
     password: password

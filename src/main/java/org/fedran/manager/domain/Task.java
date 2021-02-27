@@ -1,13 +1,15 @@
 package org.fedran.manager.domain;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Getter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -21,7 +23,7 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
 
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "estimate_min")
@@ -47,45 +49,17 @@ public class Task {
     private Task parent;
 
     @OneToMany(mappedBy = "parent")
-    private Set<Task> children;
-
-    public void assignUser(User user) {
-        var assignee = getAssignee();
-        if (assignee != null) {
-            assignee.getTasks().remove(this);
-        }
-        setAssignee(user);
-        if (user != null) {
-            user.getTasks().add(this);
-        }
-    }
-
-    public void addTo(Project project) {
-        var old = getProject();
-        if (old != null) {
-            old.getTasks().remove(this);
-        }
-        setProject(project);
-        if (project != null) {
-            project.getTasks().add(this);
-        }
-    }
-
-    public void addChild(Task task) {
-        if (task != null) {
-            task.setParent(this);
-            task.getChildren().add(task);
-        }
-    }
+    private Set<Task> children = new HashSet<>();
 
     public void removeParent() {
-        getParent().getChildren().remove(this);
         setParent(null);
     }
 
-    public void close() {
-        setStatus(Status.CLOSE);
-        getChildren().forEach(Task::close);
+    public int calculateRemainingTimeSum() {
+        var i = getEstimateMin() - getSpendMin();
+        return i = i + children.stream()
+                    .mapToInt(Task::calculateRemainingTimeSum)
+                    .sum();
     }
 
     @Override
@@ -103,5 +77,23 @@ public class Task {
 
     public enum Status {
         OPEN, CLOSE
+    }
+
+    public String buildShortString() {
+        return "Task - " + name;
+    }
+
+    public String buildFullString() {
+        return "Task{" +
+                "taskId=" + getTaskId() +
+                ", name='" + getName() + '\'' +
+                ", estimateMin=" + getEstimateMin() +
+                ", spendMin=" + getSpendMin() +
+                ", status=" + getStatus() +
+                ", assignee=" + getAssignee() +
+                ", project=" + getProject() +
+                ", parent=" + getParent() +
+                ", children=" + getParent() +
+                '}';
     }
 }
