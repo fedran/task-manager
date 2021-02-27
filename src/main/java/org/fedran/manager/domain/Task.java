@@ -8,6 +8,7 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -49,37 +50,7 @@ public class Task {
     @OneToMany(mappedBy = "parent")
     private Set<Task> children;
 
-    public void assignUser(User user) {
-        var assignee = getAssignee();
-        if (assignee != null) {
-            assignee.getTasks().remove(this);
-        }
-        setAssignee(user);
-        if (user != null) {
-            user.getTasks().add(this);
-        }
-    }
-
-    public void addTo(Project project) {
-        var old = getProject();
-        if (old != null) {
-            old.getTasks().remove(this);
-        }
-        setProject(project);
-        if (project != null) {
-            project.getTasks().add(this);
-        }
-    }
-
-    public void addChild(Task task) {
-        if (task != null) {
-            task.setParent(this);
-            task.getChildren().add(task);
-        }
-    }
-
     public void removeParent() {
-        getParent().getChildren().remove(this);
         setParent(null);
     }
 
@@ -90,12 +61,11 @@ public class Task {
         }
     }
 
-    public Integer calculateRemainingTimeSum() {
+    public int calculateRemainingTimeSum() {
         var i = getEstimateMin() - getSpendMin();
-        for (Task child : getChildren()) {
-            i = i + (child.calculateRemainingTimeSum());
-        }
-        return i;
+        return i + children.stream()
+            .mapToInt(Task::calculateRemainingTimeSum)
+            .sum();
     }
 
     @Override

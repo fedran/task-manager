@@ -23,8 +23,7 @@ public class TaskCommands {
 
     @ShellMethod("Find task")
     public String findTask(final String name) {
-        return service.findByName(name)
-                .orElse("task " + name + " does not exist");
+        return service.findByName(name);
     }
 
     @ShellMethod("Find all tasks")
