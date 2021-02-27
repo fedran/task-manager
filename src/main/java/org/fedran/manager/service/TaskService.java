@@ -112,14 +112,13 @@ public class TaskService {
     }
 
     public String removeParent(final String taskName) {
-        final var optTask = taskRepository.findByName(taskName);
-        if (optTask.isEmpty()) {
-            return "failed to load " + taskName;
-        }
-        final var task = optTask.get();
-        task.removeParent();
-        taskRepository.save(task);
-        return "parent of " + taskName + " removed";
+        return taskRepository.findByName(taskName)
+                .map(task -> {
+                    task.removeParent();
+                    taskRepository.save(task);
+                    return "parent of " + taskName + " removed";
+                })
+                .orElse(failedToLoadMessage(taskName));
     }
 
     public String closeTask(final String taskName) {
