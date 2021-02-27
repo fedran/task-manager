@@ -35,10 +35,14 @@ public class ProjectService {
         return projectRepository.findByName(name);
     }
 
-    public List<String> findALL() {
-        return StreamSupport.stream(projectRepository.findAll().spliterator(), false)
-                .map(Project::buildShortString)
-                .collect(Collectors.toList());
+    public String findALL() {
+        final var projects = StreamSupport.stream(projectRepository.findAll().spliterator(), false)
+                .map(Project::getName)
+                .collect(Collectors.joining("," + System.lineSeparator()));
+        if (projects.isBlank()) {
+            return "no existing projects yet";
+        }
+        return "Projects: " + System.lineSeparator() + projects;
     }
 
     public void deleteByName(final String name) {

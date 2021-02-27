@@ -1,13 +1,13 @@
 package org.fedran.manager.service;
 
-import org.fedran.manager.domain.Project;
-import org.fedran.manager.domain.User;
-import org.fedran.manager.repository.ProjectRepository;
-import org.fedran.manager.repository.TaskRepository;
-import org.fedran.manager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.fedran.manager.repository.ProjectRepository;
+import org.fedran.manager.repository.TaskRepository;
+import org.fedran.manager.repository.UserRepository;
+import org.fedran.manager.domain.Project;
+import org.fedran.manager.domain.User;
 import org.fedran.manager.domain.Task;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +30,13 @@ public class TaskServiceTest {
     private Task subtask;
 
     @Autowired
-    private TaskServiceTest(TaskService taskService, EntityManagerFactory entityManagerFactory, TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository) {
+    private TaskServiceTest(
+            TaskService taskService,
+            EntityManagerFactory entityManagerFactory,
+            TaskRepository taskRepository,
+            UserRepository userRepository,
+            ProjectRepository projectRepository
+    ) {
         this.taskService = taskService;
         this.entityManagerFactory = entityManagerFactory;
         this.taskRepository = taskRepository;
@@ -47,7 +53,7 @@ public class TaskServiceTest {
 
     @Test
     public void findByNameTest() {
-        generateTask();
+        createTask();
         final var task = taskService.findByName("Homework");
         assertTrue(task.isPresent());
         assertEquals(100, task.get().getEstimateMin());
@@ -57,7 +63,8 @@ public class TaskServiceTest {
 
     @Test
     public void findAllTest() {
-        generateSubtask();
+        createTask();
+        createSubtask();
         final var tasks = taskService.findAll();
         assertEquals(2, tasks.size());
         assertTrue(tasks.stream().anyMatch(s -> s.equals("Task - Homework")));
@@ -67,7 +74,7 @@ public class TaskServiceTest {
 
     @Test
     public void deleteByNameTest() {
-        generateTask();
+        createTask();
         final var task = taskService.findByName("Homework");
         assertTrue(task.isPresent());
         assertEquals("Homework", task.get().getName());
@@ -78,9 +85,10 @@ public class TaskServiceTest {
 
     @Test
     public void assignTaskOnUserTest() {
-        generateTaskAndUser();
-        final var s = taskService.assignTaskOnUser("Homework", "Alex");
-        final var task = taskService.findByName("Homework");
+        createUser();
+        createTask();
+        final var s = taskService.assignTaskOnUser(this.task.getName(), user.getName());
+        final var task = taskService.findByName(this.task.getName());
         assertTrue(task.isPresent());
         assertEquals(user, task.get().getAssignee());
         assertEquals("Homework assigned on Alex", s);
@@ -89,9 +97,10 @@ public class TaskServiceTest {
 
     @Test
     public void addTaskToProjectTest() {
-        setUp();
-        final var s = taskService.addTaskToProject("Homework", "Home");
-        final var task = taskService.findByName("Homework");
+        createProject();
+        createTask();
+        final var s = taskService.addTaskToProject(this.task.getName(), project.getName());
+        final var task = taskService.findByName(this.task.getName());
         assertTrue(task.isPresent());
         assertEquals(project, task.get().getProject());
         assertEquals("Homework successfully added to Home", s);
@@ -100,15 +109,17 @@ public class TaskServiceTest {
 
     @Test
     public void generateReportTest() {
-        setUp();
+        setUpProject();
         final var report = taskService.generateReport("Home", "Alex");
-        assertEquals("Tasks created for Home by Alex:" + System.lineSeparator() + "Homework", report);
+        final var s = "Tasks created for Home by Alex:" + System.lineSeparator() + "Homework";
+        assertEquals(s, report);
         deleteAll();
     }
 
     @Test
     public void addSubtaskTest() {
-        generateSubtask();
+        createTask();
+        createSubtask();
         taskService.addSubtask(task.getName(), this.subtask.getName());
         final var subtask = taskService.findByName(this.subtask.getName());
         assertTrue(subtask.isPresent());
@@ -155,16 +166,80 @@ public class TaskServiceTest {
         deleteAll();
     }
 
-
-    public void deleteAll() {
-        taskRepository.deleteAll();
-        userRepository.deleteAll();
-        projectRepository.deleteAll();
+    @Test
+    public void estimateTest() {
+        createTask();
+        taskService.estimate(task.getName(), 300);
+        final var task = taskService.findByName(this.task.getName());
+        assertTrue(task.isPresent());
+        assertEquals(300, task.get().getEstimateMin());
+        deleteAll();
     }
 
-    private void setUp() {
+    @Test
+    public void spendTest() {
+        createTask();
+        taskService.spend(task.getName(), 150);
+        final var task = taskService.findByName(this.task.getName());
+        assertTrue(task.isPresent());
+        assertEquals(150, task.get().getSpendMin());
+        deleteAll();
+    }
+
+    private void createTask() {
         final var entityManager = this.entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
+
+        task = new Task();
+        task.setName("Homework");
+        entityManager.persist(task);
+        task.setEstimateMin(100);
+        task.setSpendMin(50);
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    private void createSubtask() {
+        final var entityManager = this.entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        subtask = new Task();
+        subtask.setName("Subtask");
+        entityManager.persist(subtask);
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    private void createUser() {
+        final var entityManager = this.entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        user = new User();
+        user.setName("Alex");
+        entityManager.persist(user);
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    private void createProject() {
+        final var entityManager = this.entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
+        project = new Project();
+        project.setName("Home");
+        entityManager.persist(project);
+
+        entityManager.getTransaction().commit();
+        entityManager.close();
+    }
+
+    private void setUpProject() {
+        final var entityManager = this.entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+
         user = new User();
         user.setName("Alex");
         entityManager.persist(user);
@@ -181,25 +256,8 @@ public class TaskServiceTest {
         task.setAssignee(user);
         entityManager.persist(task);
 
-        subtask = new Task();
-        subtask.setName("Subtask");
-        subtask.setParent(task);
-        entityManager.persist(subtask);
-
         entityManager.getTransaction().commit();
-    }
-
-    private void generateTask() {
-        final var entityManager = this.entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-
-        task = new Task();
-        task.setName("Homework");
-        entityManager.persist(task);
-        task.setEstimateMin(100);
-        task.setSpendMin(50);
-
-        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     private void generateRelatedTasks() {
@@ -220,44 +278,12 @@ public class TaskServiceTest {
         entityManager.persist(subtask);
 
         entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
-
-    private void generateTaskAndUser() {
-        final var entityManager = this.entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-
-        user = new User();
-        user.setName("Alex");
-        entityManager.persist(user);
-
-        task = new Task();
-        task.setName("Homework");
-        task.setEstimateMin(100);
-        task.setSpendMin(50);
-        task.setAssignee(user);
-        entityManager.persist(task);
-
-        entityManager.getTransaction().commit();
-    }
-
-
-    private void generateSubtask() {
-        final var entityManager = this.entityManagerFactory.createEntityManager();
-        entityManager.getTransaction().begin();
-
-        task = new Task();
-        task.setName("Homework");
-        task.setEstimateMin(100);
-        task.setSpendMin(50);
-        task.setProject(project);
-        task.setAssignee(user);
-        entityManager.persist(task);
-
-        subtask = new Task();
-        subtask.setName("Subtask");
-        entityManager.persist(subtask);
-
-        entityManager.getTransaction().commit();
+    private void deleteAll() {
+        taskRepository.deleteAll();
+        userRepository.deleteAll();
+        projectRepository.deleteAll();
     }
 }
