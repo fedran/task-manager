@@ -23,9 +23,9 @@ public class UserCommands {
     public String findUser(@ShellOption(defaultValue="") final String name) {
         var users = service.findByNameLike(name);
         var sb = new StringBuilder();
-        for (int i = 1; i < users.size(); i++) {
+        for (int i = 0; i < users.size(); i++) {
             var user = users.get(i);
-            sb.append(i);
+            sb.append(i + 1);
             sb.append(". ");
             sb.append(user.getName());
             sb.append("\n");

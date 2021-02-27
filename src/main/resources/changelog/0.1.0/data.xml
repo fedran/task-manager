@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="data-0221" author="fedran">
+        <insert tableName="users">
+            <column name="NAME" value="fedran"/>
+        </insert>
+        <insert tableName="projects">
+            <column name="NAME" value="My first project"/>
+        </insert>
+        <insert tableName="projects">
+            <column name="NAME" value="My second project"/>
+        </insert>
+        <insert tableName="tasks">
+            <column name="NAME" value="first task"/>
+            <column name="ESTIMATE_MIN" value="30"/>
+            <column name="SPEND_MIN" value="5"/>
+            <column name="STATUS" value="OPEN"/>
+            <column name="PROJECT_ID" value="1"/>
+            <column name="USER_ID" value="1"/>
+        </insert>
+        <insert tableName="tasks">
+            <column name="NAME" value="subtask"/>
+            <column name="ESTIMATE_MIN" value="20"/>
+            <column name="SPEND_MIN" value="10"/>
+            <column name="STATUS" value="OPEN"/>
+            <column name="PROJECT_ID" value="1"/>
+            <column name="USER_ID" value="1"/>
+            <column name="PARENT_ID" value="1"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

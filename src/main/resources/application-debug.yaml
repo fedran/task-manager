@@ -11,9 +11,9 @@ spring:
       hibernate:
         format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   datasource:
-    url: jdbc:h2:file:/Users/theodore/desktop/task-manager/data/task-manager
+    url: jdbc:h2:mem:db
     driver-class-name: org.h2.Driver
     username: sa
     password: password

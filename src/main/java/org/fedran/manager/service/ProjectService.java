@@ -9,7 +9,6 @@ import org.fedran.manager.domain.Project;
 import java.util.stream.StreamSupport;
 import java.util.stream.Collectors;
 import java.util.Optional;
-import java.util.List;
 
 import static org.fedran.manager.service.TaskService.failedToLoadMessage;
 
