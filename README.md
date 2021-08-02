@@ -4,7 +4,7 @@
 #### How to run project
 
 Clone repo:
-`git clone <url>`
+`git clone https://github.com/fedran/task-manager.git`
 
 Enter to project directory:
 `cd ./task-manager`
